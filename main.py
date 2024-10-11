@@ -6,6 +6,7 @@ import threading
 import sense_hat
 
 import display
+import hydration
 import storage
 
 state: storage.State
@@ -57,16 +58,16 @@ def register_glass() -> None:
     timestamp = dt.datetime.now().replace(microsecond=0)
     state.history.append(timestamp)
     change_day(dt.date.today())
+    thirst = hydration.get_thirst(state.history, state.glasses_per_day)
+    display.display_thirst(thirst)
     storage.save_state(state)
 
 
 def update_thirst() -> None:
     """Periodically update the thirst level."""
-    # FIXME: dummy implementation
-    thirst = 0.0
     while True:
+        thirst = hydration.get_thirst(state.history, state.glasses_per_day)
         display.display_thirst(thirst)
-        thirst = (thirst + 0.1) % 1
         threading.Event().wait(5)
 
 

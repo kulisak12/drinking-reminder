@@ -9,6 +9,7 @@ STATE_FILE = "state.pickle"
 class State:
     history: list[dt.datetime] = dataclasses.field(default_factory=list)
     day_displayed: dt.date = dt.date.today()
+    glasses_per_day: int = 12
 
 
 def save_state(state: State) -> None:
