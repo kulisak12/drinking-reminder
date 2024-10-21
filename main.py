@@ -17,6 +17,7 @@ def main() -> None:
     global state
     state = storage.load_state()
     change_day(dt.date.today())
+    hydration.reset_timer()
 
     # a thread that runs continuously and updates the thirst level
     threading.Thread(target=update_thirst, daemon=True).start()
@@ -58,7 +59,8 @@ def register_glass() -> None:
     timestamp = dt.datetime.now().replace(microsecond=0)
     state.history.append(timestamp)
     change_day(dt.date.today())
-    thirst = hydration.get_thirst(state.history, state.glasses_per_day)
+    hydration.reset_timer()
+    thirst = hydration.get_thirst(state.glasses_per_day)
     display.display_thirst(thirst)
     storage.save_state(state)
 
@@ -66,9 +68,9 @@ def register_glass() -> None:
 def update_thirst() -> None:
     """Periodically update the thirst level."""
     while True:
-        thirst = hydration.get_thirst(state.history, state.glasses_per_day)
+        thirst = hydration.get_thirst(state.glasses_per_day)
         display.display_thirst(thirst)
-        threading.Event().wait(5)
+        threading.Event().wait(1)
 
 
 def configure_callbacks() -> None:
